@@ -625,6 +625,60 @@ describe('basic-querying', function() {
   });
 });
 
+describe('updateOrCreate', function() {
+  var db = getSchema();
+  var Todo;
+
+  before(function setUp(done) {
+    Todo = db.define('Todo', {
+      content: String,
+    });
+    db.automigrate('Todo', done);
+  });
+  afterEach(function tearDown(done) {
+    db.automigrate(done);
+  });
+
+
+  it('creates a model when one does not exist', function(done) {
+    Todo.updateOrCreate({ content: 'a' }, function(err, data) {
+      if (err) return done(err);
+
+      should.exist(data);
+      should.exist(data.content);
+      data.content.should.equal('a');
+
+      done();
+    });
+  });
+
+  it('updates a model if it exists', function(done) {
+    Todo.create({ content: 'a' }, function(err, todo) {
+      Todo.updateOrCreate({ id: 1, content: 'b' }, function(err, data) {
+        if (err) return done(err);
+
+        should.exist(data);
+        should.exist(data.id);
+        data.id.should.equal(1);
+        should.exist(data.content);
+        data.content.should.equal('b');
+
+        done();
+      });
+    });
+  });
+
+
+  it('throws error for queries with array input', function(done) {
+    Todo.updateOrCreate([{ content: 'a' }], function(err, data) {
+      should.exist(err);
+      should.not.exist(data);
+
+      done();
+    });
+  });
+});
+
 describe.skip('queries', function() {
   var Todo;
 
