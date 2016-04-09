@@ -1668,7 +1668,6 @@ module.exports = function(dataSource, should, connectorCapabilities) {
             } else {
               triggered.should.eql([
                 'access',
-                'loaded',
                 'before save',
                 'persist',
                 'loaded',
@@ -2011,25 +2010,14 @@ module.exports = function(dataSource, should, connectorCapabilities) {
                 isNewInstance: false,
               }));
             } else {
-              // For Unoptimized connector, the callback function `pushContextAndNext`
-              // is called twice. As a result, observedContexts
-              // returns an array and NOT a single instance.
-              observedContexts.should.eql([
-                aTestModelCtx({
-                  data: {
-                    id: existingInstance.id,
-                    name: 'first',
-                  },
-                  isNewInstance: false,
-                  options: { notify: false },
-                }),
+              observedContexts.should.eql(
                 aTestModelCtx({
                   data: {
                     id: existingInstance.id,
                     name: 'updated name',
                   },
-                }),
-              ]);
+                })
+              );
             }
             done();
           });
@@ -2122,18 +2110,8 @@ module.exports = function(dataSource, should, connectorCapabilities) {
                   'after save',
                 ]);
               } else {
-                // TODO: Please see loopback-datasource-juggler/issues#836
-                //
-                // loaded hook is triggered twice in non-atomic version:
-                // 1) It gets triggered once by "find()" in this chain:
-                //    "replaceORCreate()->findOne()->find()",
-                //    which is a bug; Please see this ticket:
-                //    loopback-datasource-juggler/issues#836.
-                // 2) It, also, gets triggered in "replaceAttributes()"
-                //    in this chain replaceORCreate()->replaceAttributes()
                 triggered.should.eql([
                   'access',
-                  'loaded',
                   'before save',
                   'persist',
                   'loaded',
@@ -2453,32 +2431,15 @@ module.exports = function(dataSource, should, connectorCapabilities) {
               if (dataSource.connector.replaceOrCreate) {
                 observedContexts.should.eql(aTestModelCtx(expected));
               } else {
-                // TODO: Please see loopback-datasource-juggler/issues#836
-                //
-                // loaded hook is triggered twice in non-atomic version:
-                // 1) It gets triggered once by "find()" in this chain:
-                //    "replaceORCreate()->findOne()->find()",
-                //    which is a bug; Please see this ticket:
-                //    loopback-datasource-juggler/issues#836.
-                // 2) It, also, gets triggered in "replaceAttributes()"
-                //    in this chain replaceORCreate()->replaceAttributes()
-                observedContexts.should.eql([
-                  aTestModelCtx({
-                    data: {
-                      id: existingInstance.id,
-                      name: 'first',
-                    },
-                    isNewInstance: false,
-                    options: { notify: false },
-                  }),
+                observedContexts.should.eql(
                   aTestModelCtx({
                     data: {
                       id: existingInstance.id,
                       name: 'replaced name',
                     },
                     isNewInstance: false,
-                  }),
-                ]);
+                  })
+                );
               }
               done();
             });
