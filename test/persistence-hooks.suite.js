@@ -1657,23 +1657,13 @@ module.exports = function(dataSource, should, connectorCapabilities) {
           { id: existingInstance.id, name: 'new name' },
           function(err, record, created) {
             if (err) return done(err);
-            if (dataSource.connector.updateOrCreate) {
-              triggered.should.eql([
-                'access',
-                'before save',
-                'persist',
-                'loaded',
-                'after save',
-              ]);
-            } else {
-              triggered.should.eql([
-                'access',
-                'before save',
-                'persist',
-                'loaded',
-                'after save',
-              ]);
-            }
+            triggered.should.eql([
+              'access',
+              'before save',
+              'persist',
+              'loaded',
+              'after save',
+            ]);
             done();
           });
       });
@@ -2101,23 +2091,13 @@ module.exports = function(dataSource, should, connectorCapabilities) {
             { id: existingInstance.id, name: 'new name' },
             function(err, record, created) {
               if (err) return done(err);
-              if (dataSource.connector.replaceOrCreate) {
-                triggered.should.eql([
-                  'access',
-                  'before save',
-                  'persist',
-                  'loaded',
-                  'after save',
-                ]);
-              } else {
-                triggered.should.eql([
-                  'access',
-                  'before save',
-                  'persist',
-                  'loaded',
-                  'after save',
-                ]);
-              };
+              triggered.should.eql([
+                'access',
+                'before save',
+                'persist',
+                'loaded',
+                'after save',
+              ]);
               done();
             });
         });
@@ -2428,19 +2408,7 @@ module.exports = function(dataSource, should, connectorCapabilities) {
                 connectorCapabilities.replaceOrCreateReportsNewInstance ?
                 false : undefined;
 
-              if (dataSource.connector.replaceOrCreate) {
-                observedContexts.should.eql(aTestModelCtx(expected));
-              } else {
-                observedContexts.should.eql(
-                  aTestModelCtx({
-                    data: {
-                      id: existingInstance.id,
-                      name: 'replaced name',
-                    },
-                    isNewInstance: false,
-                  })
-                );
-              }
+              observedContexts.should.eql(aTestModelCtx(expected));
               done();
             });
         });
