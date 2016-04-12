@@ -1991,13 +1991,24 @@ module.exports = function(dataSource, should, connectorCapabilities) {
           function(err, instance) {
             if (err) return done(err);
 
-            observedContexts.should.eql(aTestModelCtx({
-              data: {
-                id: existingInstance.id,
-                name: 'updated name',
-              },
-              isNewInstance: false,
-            }));
+            if (dataSource.connector.updateOrCreate) {
+              observedContexts.should.eql(aTestModelCtx({
+                data: {
+                  id: existingInstance.id,
+                  name: 'updated name',
+                },
+                isNewInstance: false,
+              }));
+            } else {
+              observedContexts.should.eql(
+                aTestModelCtx({
+                  data: {
+                    id: existingInstance.id,
+                    name: 'updated name',
+                  },
+                })
+              );
+            }
             done();
           });
       });
