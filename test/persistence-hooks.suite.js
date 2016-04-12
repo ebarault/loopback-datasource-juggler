@@ -10,6 +10,9 @@ var ContextRecorder = contextTestHelpers.ContextRecorder;
 var deepCloneToObject = contextTestHelpers.deepCloneToObject;
 var aCtxForModel = contextTestHelpers.aCtxForModel;
 
+var uid = require('./helpers/uid-generator');
+var getLastGeneratedUid = uid.last;
+
 module.exports = function(dataSource, should, connectorCapabilities) {
   if (!connectorCapabilities) connectorCapabilities = {};
   if (connectorCapabilities.replaceOrCreateReportsNewInstance === undefined) {
@@ -19,7 +22,7 @@ module.exports = function(dataSource, should, connectorCapabilities) {
   describe('Persistence hooks', function() {
     var ctxRecorder, expectedError, observersCalled;
     var TestModel, existingInstance;
-    var migrated = false, lastId;
+    var migrated = false;
     var triggered;
 
     var undefinedValue = undefined;
@@ -36,7 +39,7 @@ module.exports = function(dataSource, should, connectorCapabilities) {
         extra: { type: String, required: false },
       });
 
-      lastId = 0;
+      uid.reset();
 
       if (migrated) {
         TestModel.deleteAll(done);
@@ -3011,15 +3014,6 @@ module.exports = function(dataSource, should, connectorCapabilities) {
 
     function loadTestModel(id, cb) {
       TestModel.findOne({ where: { id: id }}, { notify: false }, cb);
-    }
-
-    function uid() {
-      lastId += 1;
-      return '' + lastId;
-    }
-
-    function getLastGeneratedUid() {
-      return '' + lastId;
     }
 
     function monitorHookExecution() {
