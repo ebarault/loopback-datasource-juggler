@@ -761,9 +761,9 @@ describe('relations', function() {
           physician.patients(fieldsFilter, function(err, ch) {
             should.not.exist(err);
             should.exist(ch);
-            ch[0].name.should.exist;
+            should.exist(ch[0].name);
             ch[0].name.should.eql('a');
-            ch[0].age.should.not.exist;
+            should.not.exist(ch[0].age);
             done();
           });
         });
